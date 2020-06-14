@@ -1,0 +1,251 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+
+<script type="text/javascript">
+	function mychange1(){
+      document.getElementById("pollsbackground").style.backgroundImage="url({% static 'images/fashion.jpg' %})";	
+  }
+  function mychange2(){
+      document.getElementById("pollsbackground").style.backgroundImage="url({% static 'images/classic.jpg' %})";	
+  }
+</script>
+
+<body id="pollsbackground">
+<div class="content">
+    {% if messages %}
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }} message" {% endif %}  style="padding-left: 15px; padding-right: 15px;">
+        <span class="closebtn"
+            onclick="this.parentElement.style.display='none';">&times;
+          </span>
+          {{ message }}
+        </li>
+      {% endfor %}
+    {% endif %} 
+  </div>
+
+<div class="user-header-bg">
+    <div class="user-header">
+    Sie sind angemeldet als:
+    &emsp;<br>
+    {{ user }}
+    &emsp;&emsp;
+    <br>
+    <a href="{% url 'logout' %}">Log out</a>
+    </div>
+</div>
+
+
+  <a href="{% url 'addQuestion' %}" class="pull-right"> 
+   <img src="{% static 'images/Blau_KmS.png' %}" alt="Smiley face" height="100" width="100">
+  </a>
+
+<div class="text-center">
+  <input type="text" name="keyword" maxlength="40" id="id_keyword" value="{{ keyword }}" size="50">
+  <a href="javascript:void(0)" id="search_user" onclick="clickFunctionSearch()" class="button-href" style="text-decoration: none;">🔍Search</a>
+  <a href="" id="search_link" hidden></a>
+</div>
+Background Style ：
+<button onclick="mychange1()">fashion</button>
+<button onclick="mychange2()">classic</button>
+
+<p></p>
+
+
+
+
+  <hr>
+  <table border="1" width="100%" >
+    <tr>
+      <th>To be discussed</th>
+      <th>Being discussed </th>
+      <th>Already discussed</th>
+    </tr>
+    <tr>
+      <td> 
+        
+        {% if question_list1.paginator.num_pages > 1 %}
+        <div class="text-center" style="padding-bottom: 10px;">
+          <span class="pagination">
+              {% for index in question_list1.paginator.page_range %}
+                {% if question_list1.number == index %}
+                <a href="?page1={{ index }}&keyword={{ keyword }}" class="active">{{ index }}</a>
+                {% else %}
+                <a href="?page1={{ index }}&keyword={{ keyword }}">{{ index }}</a>
+                {% endif %}
+              {% endfor %}
+          </span>
+        </div>
+        {% endif %}
+
+        {% if question_list1 %}
+        <div id="box">
+            <ul>
+            {% for question in question_list1 %}
+                <div id="drag" class="row" style="padding-bottom: 20px;border:1px solid #000 ;">
+                  <p>
+                  <span style="color: crimson;"> &emsp;von {{ question.creator }}</span> --- {{ question.pub_date }}
+                  {% ifequal user.id question.creator.id %}
+                  <p></p>
+                <a class="pull-right" style="padding-right: 10px;" href="{% url 'deleteQuestion' question.id %}">X</a>
+                &emsp;
+                <a class="pull-right" style="padding-right: 10px;" href="{% url 'editQuestion' question.id %}">Edit</a>
+                {% endifequal %}
+                </p>
+                    <div class="column">
+                        <div class="card" style="background-color:{{ question.get_color_display }} ;">
+        
+                          <!-- {% ifequal user.id question.creator.id %}
+                          <a class="pull-left" href="{% url 'editQuestion' question.id %}">Edit</a>
+                          <a class="pull-right" href="{% url 'deleteQuestion' question.id %}">X</a>
+                          {% endifequal %} -->
+                          
+                            <span style="font-size: {{ question.get_font_display }};">{{ question.question_text }}</span>
+                        </div>
+                        <a class="pull-left" href="{% url 'vote' question.id %}">Vote</a>
+                        &emsp;&emsp;&emsp;
+                        <a class="" href="{% url 'download' question.id %}">Download as PDF</a>
+                        <a class="pull-right" href="{% url 'results' question.id %}">Result</a>
+                    </div>
+              </div>
+            {% endfor %}
+            </ul>
+          </div>
+        
+        {% else %}
+            <p>No polls are available.</p>
+        {% endif %}
+      </td>
+      <td> 
+        {% if question_list2.paginator.num_pages > 1 %}
+        <div class="text-center" style="padding-bottom: 10px;">
+          <span class="pagination">
+              {% for index in question_list2.paginator.page_range %}
+                {% if question_list2.number == index %}
+                <a href="?page2={{ index }}&keyword={{ keyword }}" class="active">{{ index }}</a>
+                {% else %}
+                <a href="?page2={{ index }}&keyword={{ keyword }}">{{ index }}</a>
+                {% endif %}
+              {% endfor %}
+          </span>
+        </div>
+        {% endif %}
+
+        {% if question_list2 %}
+        <div id="box">
+            <ul>
+            {% for question in question_list2 %}
+                <div id="drag" class="row" style="padding-bottom: 20px;border:1px solid #000 ;">
+                  <p>
+                  <span style="color: crimson;"> &emsp;von {{ question.creator }}</span> --- {{ question.pub_date }}
+                  {% ifequal user.id question.creator.id %}
+                  <p></p>
+                <a class="pull-right" style="padding-right: 10px;" href="{% url 'deleteQuestion' question.id %}">X</a>
+                &emsp;
+                <a class="pull-right" style="padding-right: 10px;" href="{% url 'editQuestion' question.id %}">Edit</a>
+                {% endifequal %}
+                </p>
+                    <div class="column">
+                        <div class="card" style="background-color:{{ question.get_color_display }} ;">
+        
+                          <!-- {% ifequal user.id question.creator.id %}
+                          <a class="pull-left" href="{% url 'editQuestion' question.id %}">Edit</a>
+                          <a class="pull-right" href="{% url 'deleteQuestion' question.id %}">X</a>
+                          {% endifequal %} -->
+                          
+                            <span style="font-size: {{ question.get_font_display }};">{{ question.question_text }}</span>
+                        </div>
+                        <a class="pull-left" href="{% url 'vote' question.id %}">Vote</a>
+                        &emsp;&emsp;&emsp;
+                        <a class="" href="{% url 'download' question.id %}">Download as PDF</a>
+                        <a class="pull-right" href="{% url 'results' question.id %}">Result</a>
+                    </div>
+              </div>
+            {% endfor %}
+            </ul>
+          </div>
+        
+        {% else %}
+            <p>No polls are available.</p>
+        {% endif %}
+      </td>
+      <td>
+        {% if question_list3.paginator.num_pages > 1 %}
+        <div class="text-center" style="padding-bottom: 10px;">
+          <span class="pagination">
+              {% for index in question_list3.paginator.page_range %}
+                {% if question_list3.number == index %}
+                <a href="?page3={{ index }}&keyword={{ keyword }}" class="active">{{ index }}</a>
+                {% else %}
+                <a href="?page3={{ index }}&keyword={{ keyword }}">{{ index }}</a>
+                {% endif %}
+              {% endfor %}
+          </span>
+        </div>
+        {% endif %}
+
+        {% if question_list3 %}
+        <div id="box">
+            <ul>
+            {% for question in question_list3 %}
+                <div id="drag" class="row" style="padding-bottom: 20px;border:1px solid #000 ;">
+                  <p>
+                  <span style="color: crimson;"> &emsp;von {{ question.creator }}</span> --- {{ question.pub_date }}
+                  {% ifequal user.id question.creator.id %}
+                  <p></p>
+                <a class="pull-right" style="padding-right: 10px;" href="{% url 'deleteQuestion' question.id %}">X</a>
+                &emsp;
+                <a class="pull-right" style="padding-right: 10px;" href="{% url 'editQuestion' question.id %}">Edit</a>
+                {% endifequal %}
+                </p>
+                    <div class="column">
+                        <div class="card" style="background-color:{{ question.get_color_display }} ;">
+        
+                          <!-- {% ifequal user.id question.creator.id %}
+                          <a class="pull-left" href="{% url 'editQuestion' question.id %}">Edit</a>
+                          <a class="pull-right" href="{% url 'deleteQuestion' question.id %}">X</a>
+                          {% endifequal %} -->
+                          
+                            <span style="font-size: {{ question.get_font_display }};">{{ question.question_text }}</span>
+                        </div>
+                        <a class="pull-left" href="{% url 'vote' question.id %}">Vote</a>
+                        &emsp;&emsp;&emsp;
+                        <a class="" href="{% url 'download' question.id %}">Download as PDF</a>
+                        <a class="pull-right" href="{% url 'results' question.id %}">Result</a>
+                    </div>
+              </div>
+            {% endfor %}
+            </ul>
+          </div>
+        
+        {% else %}
+            <p>No polls are available.</p>
+        {% endif %}
+       </td>
+    </tr>
+  </table>
+
+
+</body>
+
+
+<script>
+  $("#id_keyword").keypress(function (e) {
+      if (e.keyCode == 13) {
+          // alert('enter key pressed')
+          clickFunctionSearch();
+      }
+  });
+
+  function clickFunctionSearch() {
+      var keyword = document.getElementById("id_keyword").value;
+      // alert('keyword is: '+keyword)
+      var search_link = document.getElementById("search_link");
+      search_link.href = "?page={{lessons.number}}&keyword="+keyword+"{% if constrained %}&constrained=True{% endif %}"
+      search_link.click()
+      return false;
+  }
+</script>
+
+<!-- asdada -->
