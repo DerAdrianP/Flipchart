@@ -1,10 +1,10 @@
 package com.iot.restapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Temperature {
 
+public class Temperature {
+    @JsonProperty
     private static float temperature = 0;
 
     public Temperature() {
